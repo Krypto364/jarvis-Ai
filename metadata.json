@@ -1,0 +1,6 @@
+{
+  "name": "J.A.R.V.I.S.",
+  "description": "A sophisticated AI assistant with 3D holographic core, multi-modal analysis, and advanced media synthesis (Image/Video/Audio).",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["3D AI Core", "Media Synthesis", "Multi-modal Analysis", "Voice Control", "Search Grounding"]
+}

@@ -1,0 +1,67 @@
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: /users/{uid}
+// Fields:
+//   - uid: string (required)
+//   - displayName: string (optional)
+//   - email: string (required)
+//   - photoURL: string (optional)
+//   - createdAt: string (required)
+//
+// Collection: /users/{uid}/messages/{messageId}
+// Fields:
+//   - userId: string (required)
+//   - role: string (required, enum: ['user', 'jarvis'])
+//   - content: string (required)
+//   - timestamp: string (required)
+//   - mediaUrl: string (optional)
+//   - mediaType: string (optional, enum: ['image', 'video', 'audio'])
+//
+// ===============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'createdAt']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.createdAt is string;
+    }
+
+    function isValidMessage(data) {
+      return data.keys().hasAll(['userId', 'role', 'content', 'timestamp']) &&
+             data.userId == request.auth.uid &&
+             data.role in ['user', 'jarvis'] &&
+             data.content is string &&
+             data.content.size() < 10000;
+    }
+
+    // User Profiles
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidUser(request.resource.data);
+      allow update: if isOwner(uid) && isValidUser(request.resource.data) && 
+                      request.resource.data.uid == resource.data.uid;
+    }
+
+    // Messages
+    match /users/{uid}/messages/{messageId} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidMessage(request.resource.data);
+      allow delete: if isOwner(uid);
+    }
+  }
+}

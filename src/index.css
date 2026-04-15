@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@theme {
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Helvetica Neue', Arial, sans-serif;
+  
+  --color-hud-bg: #050505;
+  --color-hud-text: #e0e0e0;
+  --color-hud-accent: #00d4ff;
+  --color-hud-border: rgba(0, 212, 255, 0.2);
+  --color-hud-sidebar: rgba(255, 255, 255, 0.03);
+  --color-hud-console: rgba(0, 212, 255, 0.05);
+}
+
+@layer base {
+  * {
+    @apply border-hud-border;
+  }
+  
+  body {
+    @apply bg-hud-bg text-hud-text font-sans overflow-hidden antialiased;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-hud-accent/20 rounded-full hover:bg-hud-accent/50 transition-colors;
+  }
+}
+
+@layer components {
+  .grid-overlay {
+    @apply fixed inset-0 pointer-events-none z-0;
+    background-image: radial-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
